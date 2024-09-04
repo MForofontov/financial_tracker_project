@@ -10,35 +10,23 @@ const api: AxiosInstance = axios.create({
 });
 
 const refreshToken = async (): Promise<void> => {
-  // Implement your token refresh logic here
-  // For example, you might call an endpoint to get a new token
-  const response = await api.post('/auth/token/refresh', {
-    // Include necessary data for refreshing the token
-  });
-  const newToken = response.data.token;
-  // Store the new token (e.g., in localStorage or a cookie)
-  localStorage.setItem('token', newToken); //Change this to your token storage method
+  // Call the token refresh endpoint
+  await api.post('token/refresh/', {});
 };
 
 // Function to call the API with token refresh logic
 const callAPI = async (config: AxiosRequestConfig): Promise<AxiosResponse> => {
   try {
-    const response = await axios(config);
+    const response = await api(config);
     return response;
   } catch (error) {
+    // Check if the error is a 401 Unauthorized error and attempt to refresh the token
     if (axios.isAxiosError(error) && error.response?.status === 401) {
       console.error('401 Unauthorized Error:', error);
       try {
         await refreshToken();
         // Retry the original request with the new token
-        const newConfig = {
-          ...config,
-          headers: {
-            ...config.headers,
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        };
-        const response = await axios(newConfig);
+        const response = await api(config);
         return response;
       } catch (refreshError) {
         console.error('Token refresh failed:', refreshError);
@@ -51,4 +39,4 @@ const callAPI = async (config: AxiosRequestConfig): Promise<AxiosResponse> => {
   }
 };
 
-export default api ;
+export { api, callAPI }; ;

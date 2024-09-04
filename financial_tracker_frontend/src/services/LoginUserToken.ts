@@ -1,4 +1,4 @@
-import api from "./api";
+import {api} from "./api";
 
 const LoginUserToken = async (email: string, password: string) => {
     try {
