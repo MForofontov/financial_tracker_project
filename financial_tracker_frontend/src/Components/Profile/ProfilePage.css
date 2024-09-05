@@ -1,0 +1,17 @@
+/* src/components/Profile/ProfilePage.css */
+.profile-page {
+    position: relative; /* Ensure the parent div is positioned relative */
+    height: 100vh; /* Ensure the parent div takes up the full viewport height */
+    overflow: hidden; /* Prevent the sidebar from overflowing */
+  }
+
+.profile-page.sidebar-visible .profile-content {
+  margin-left: 250px; /* Adjust this value to match the sidebar width */
+  transition: margin-left 0.3s ease;
+}
+
+.profile-content {
+  flex-grow: 1;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}

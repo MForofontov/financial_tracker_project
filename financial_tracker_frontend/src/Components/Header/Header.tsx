@@ -10,11 +10,9 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [isProfileSidebarOpen, setIsProfileSidebarOpen] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
-    const isAuthenticated = true; // Replace with actual authentication logic
+    const isAuthenticated = useAuth();
+
 
     const logout = async () => {
         // Add your logout logic here
@@ -22,19 +20,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         navigate('/login/');
     };
 
-    const handleToggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-        toggleSidebar(); // Call the prop function to notify the parent component
-    };
-
-    const toggleProfileSidebar = () => {
-        setIsProfileSidebarOpen(!isProfileSidebarOpen);
-    };
-
     return (
         <header className="header">
-            <button onClick={handleToggleSidebar} className="sidebar-toggle-button">☰</button>
-            {isSidebarOpen && <SideBar onClose={handleToggleSidebar} />}
+            {isAuthenticated ? (<button onClick={toggleSidebar} className="sidebar-toggle-button">☰</button>
+            ) : null}
+
             <div className="logo">My Website</div>
             <nav>
                 <ul>
@@ -43,17 +33,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                     <li><a href="/services">Services</a></li>
                     <li><a href="/contact">Contact</a></li>
                     {isAuthenticated ? (
-                        <>
-                            <li><a href="/profile">Profile</a></li>
-                            {location.pathname === '/profile' && (
-                                <li>
-                                    <button onClick={toggleProfileSidebar} className="profile-sidebar-toggle-button">
-                                        ☰
-                                    </button>
-                                </li>
-                            )}
-                            <li><button onClick={logout}>Logout</button></li>
-                        </>
+                        <li><button onClick={logout}>Logout</button></li>
                     ) : (
                         <li><a href="/login">Login</a></li>
                     )}

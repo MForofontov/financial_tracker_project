@@ -4,10 +4,11 @@ import { useAuth } from './AuthContext';
 
 interface PrivateRouteProps {
     component: React.ComponentType<any>;
+    isSidebarVisible: boolean;
     [key: string]: any; // Allow additional props
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component, ...rest }) => {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component, isSidebarVisible, ...props }) => {
     const { isAuthenticated } = useAuth();
 
     if (isAuthenticated === null) {
@@ -15,7 +16,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ component: Component, ...re
         return <div>Loading...</div>;
     }
 
-    return isAuthenticated ? <Component {...rest} /> : <Navigate to="/login" />;
+    return isAuthenticated ? <Component {...props} isSidebarVisible={isSidebarVisible}/> : <Navigate to="/login" />;
 };
 
 export default PrivateRoute;

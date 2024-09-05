@@ -1,5 +1,6 @@
 // src/components/Profile/ProfileDetails.tsx
 import React, { useState, useEffect } from 'react';
+import './ProfileDetails.css';
 import { api } from '../../services/api';
 
 interface ProfileDetailsProps {
