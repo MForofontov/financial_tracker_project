@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
@@ -21,6 +22,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30, blank=True)
     last_name = models.CharField(max_length=30, blank=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)
@@ -30,5 +34,74 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+
     def __str__(self):
         return self.email
+
+
+User = get_user_model()
+    
+class Budget(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.category.name} - {self.amount}"
+    
+class Account(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.name} - {self.balance}"
+    
+class Transaction(models.Model):
+    TRANSACTION_TYPES = [
+        ('income', 'Income'),
+        ('groceries', 'Groceries'),
+        ('entertainment', 'Entertainment'),
+        ('utilities', 'Utilities'),
+        ('transportation', 'Transportation'),
+        ('healthcare', 'Healthcare'),
+        ('education', 'Education'),
+        ('other', 'Other'),
+    ]
+    CATEGORY_TYPES = [
+        ('income', 'Income'),
+        ('expense', 'Expense'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    account = models.ForeignKey('Account', on_delete=models.CASCADE)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateField()
+    description = models.TextField(blank=True)
+    transaction_type = models.CharField(max_length=14, choices=TRANSACTION_TYPES)
+    category_type = models.CharField(max_length=7, choices=CATEGORY_TYPES)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.amount} - {self.transaction_type}"
+
+class RecurringTransaction(models.Model):
+    FREQUENCY_CHOICES = [
+        ('daily', 'Daily'),
+        ('weekly', 'Weekly'),
+        ('monthly', 'Monthly'),
+        ('yearly', 'Yearly'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    account = models.ForeignKey('Account', on_delete=models.CASCADE)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    frequency = models.CharField(max_length=7, choices=FREQUENCY_CHOICES)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.amount} - {self.frequency}"
