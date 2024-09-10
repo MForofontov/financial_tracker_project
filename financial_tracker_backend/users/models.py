@@ -40,27 +40,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 
 User = get_user_model()
-    
-class Budget(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    start_date = models.DateField()
-    end_date = models.DateField()
 
-    def __str__(self):
-        return f"{self.user.username} - {self.category.name} - {self.amount}"
-    
-class Account(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.name} - {self.balance}"
-    
-class Transaction(models.Model):
-    TRANSACTION_TYPES = [
+class Category(models.Model):
+    CATEGORY_TYPES = [
         ('income', 'Income'),
         ('groceries', 'Groceries'),
         ('entertainment', 'Entertainment'),
@@ -69,22 +51,54 @@ class Transaction(models.Model):
         ('healthcare', 'Healthcare'),
         ('education', 'Education'),
         ('other', 'Other'),
+        ('set balance', 'Set Balance'),
     ]
-    CATEGORY_TYPES = [
-        ('income', 'Income'),
-        ('expense', 'Expense'),
-    ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account = models.ForeignKey('Account', on_delete=models.CASCADE)
-    category = models.ForeignKey('Category', on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField()
-    description = models.TextField(blank=True)
-    transaction_type = models.CharField(max_length=14, choices=TRANSACTION_TYPES)
-    category_type = models.CharField(max_length=7, choices=CATEGORY_TYPES)
+    category_type = models.CharField(max_length=14, choices=CATEGORY_TYPES, unique=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.amount} - {self.transaction_type}"
+        return self.get_category_type_display()
+
+class Budget(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    start_date = models.DateField()
+    end_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.user.email} - {self.category.name} - {self.amount}"
+    
+class Account(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    account_name = models.CharField(max_length=50, primary_key=True)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.account_name} - {self.balance}"
+
+class TransactionType(models.Model):
+    TRANSACTION_TYPES = [
+        ('income', 'Income'),
+        ('expense', 'Expense'),
+        ('set balance', 'Set Balance'),
+    ]
+    transaction_type = models.CharField(max_length=11, choices=TRANSACTION_TYPES, unique=True)
+
+    def __str__(self):
+        return self.get_transaction_type_display()
+
+class Transaction(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    account_name = models.ForeignKey('Account', on_delete=models.CASCADE)
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    transaction_type = models.ForeignKey('TransactionType', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(default=timezone.now)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.amount} - {self.transaction_type}"
 
 class RecurringTransaction(models.Model):
     FREQUENCY_CHOICES = [
@@ -95,8 +109,9 @@ class RecurringTransaction(models.Model):
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account = models.ForeignKey('Account', on_delete=models.CASCADE)
+    account_name = models.ForeignKey('Account', on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    transaction_type = models.ForeignKey('TransactionType', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     start_date = models.DateField()
     end_date = models.DateField()
@@ -104,4 +119,4 @@ class RecurringTransaction(models.Model):
     description = models.TextField(blank=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.amount} - {self.frequency}"
+        return f"{self.user.email} - {self.amount} - {self.frequency}"

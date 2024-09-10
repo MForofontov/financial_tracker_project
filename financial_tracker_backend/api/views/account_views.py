@@ -2,7 +2,7 @@ from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from api.serializers import AccountSerializer
-from api.models import Account
+from users.models import Account
 
 class AccountView(APIView):
     permission_classes = [permissions.IsAuthenticated]
