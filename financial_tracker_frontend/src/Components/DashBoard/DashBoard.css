@@ -1,75 +1,70 @@
-.dashboard {
-    margin: 0 auto;
-    padding: 20px;
-    color: #333;
-    overflow: hidden; /* Prevent the sidebar from overflowing */
+/* Container for the entire dashboard */
+.dashboard-container {
     position: relative; /* Ensure the parent div is positioned relative */
+    height: 100vh; /* Ensure the parent div takes up the full viewport height */
+    overflow: hidden; /* Prevent the sidebar from overflowing */
+    margin-bottom: 10px;
   }
 
-.dashboard.sidebar-visible .dashboard-content {
+  .dashboard-container.sidebar-visible .dashboard-main{
     margin-left: 250px; /* Adjust this value to match the sidebar width */
     transition: margin-left 0.3s ease;
-}
+  }
 
-.dashboard .dashboard-content { /* Back transition */
-    margin-left: 0px; /* Adjust this value to match the sidebar width */
-    transition: margin-left 0.3s ease;
-}
-
-.dashboard-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.dashboard-header h1 {
-    font-size: 2em;
-    color: #2c3e50;
-}
-
-.dashboard-header p {
-    font-size: 1.2em;
-    color: #7f8c8d;
-}
-
-.dashboard-content {
+  /* Main content area */
+  .dashboard-main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .dashboard-header {
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-content {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-}
+  }
+  
+  .dashboard-section {
+    margin-bottom: 20px;
+    background-color: gray;
+    padding: 10px;
+  }
 
-.dashboard-section {
-    background: #ecf0f1;
+  .records-overview-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Adjust as needed */
+  }
+  
+  .dashboard-button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .dashboard-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Transaction slider styles */
+  .transaction-slide {
     padding: 20px;
-    border-radius: 8px;
-}
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
 
-.dashboard-section h2 {
-    font-size: 1.5em;
-    color: #2980b9;
-}
-
-.dashboard-section ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.dashboard-section ul li {
-font-size: 1em;
-color: #34495e;
-margin-bottom: 10px;
-}
-
-.dashboard-button {
-background: #2980b9;
-color: white;
-padding: 10px 20px;
-border: none;
-border-radius: 5px;
-cursor: pointer;
-font-size: 1em;
-margin-right: 10px;
-}
-
-.dashboard-button:hover {
-background: #3498db;
-}
+.vertical-dots-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+  }

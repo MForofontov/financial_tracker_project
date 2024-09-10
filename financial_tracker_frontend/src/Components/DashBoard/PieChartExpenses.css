@@ -1,0 +1,16 @@
+.chart-container {
+    position: relative;
+    width: 300px; /* Adjust the size as needed */
+    height: 300px; /* Adjust the size as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto; /* Center the container itself */
+}
+
+#chart-tooltip {
+    position: absolute;
+    display: none;
+    text-align: center;
+    transform: translate(-50%, -50%);
+}

@@ -53,10 +53,10 @@ class Category(models.Model):
         ('other', 'Other'),
         ('set balance', 'Set Balance'),
     ]
-    category_type = models.CharField(max_length=14, choices=CATEGORY_TYPES, unique=True)
+    name = models.CharField(max_length=14, choices=CATEGORY_TYPES, unique=True)
 
     def __str__(self):
-        return self.get_category_type_display()
+        return self.name
 
 class Budget(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -70,11 +70,11 @@ class Budget(models.Model):
     
 class Account(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account_name = models.CharField(max_length=50, primary_key=True)
+    name = models.CharField(max_length=50, unique=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return f"{self.user.email} - {self.account_name} - {self.balance}"
+        return f"{self.user.email} - {self.name} - {self.balance}"
 
 class TransactionType(models.Model):
     TRANSACTION_TYPES = [
@@ -82,15 +82,15 @@ class TransactionType(models.Model):
         ('expense', 'Expense'),
         ('set balance', 'Set Balance'),
     ]
-    transaction_type = models.CharField(max_length=11, choices=TRANSACTION_TYPES, unique=True)
+    name = models.CharField(max_length=11, choices=TRANSACTION_TYPES, unique=True)
 
     def __str__(self):
-        return self.get_transaction_type_display()
+        return self.name
 
 class Transaction(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account_name = models.ForeignKey('Account', on_delete=models.CASCADE)
+    account = models.ForeignKey('Account', on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     transaction_type = models.ForeignKey('TransactionType', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -109,7 +109,7 @@ class RecurringTransaction(models.Model):
     ]
     
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    account_name = models.ForeignKey('Account', on_delete=models.CASCADE)
+    account = models.ForeignKey('Account', on_delete=models.CASCADE)
     category = models.ForeignKey('Category', on_delete=models.CASCADE)
     transaction_type = models.ForeignKey('TransactionType', on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
