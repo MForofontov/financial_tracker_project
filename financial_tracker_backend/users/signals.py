@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Account, Transaction, TransactionType, Category
+from .models import Account, Transaction, TransactionType, Category, SubCategory
 
 # Signal receiver to update account balance after a transaction is saved
 @receiver(post_save, sender=Transaction)
@@ -25,11 +25,14 @@ def create_set_balance_transaction(sender, instance, created, **kwargs):
         set_balance_type = TransactionType.objects.get(name='set balance')
         # Get the 'set balance' category
         set_balance_category = Category.objects.get(name='set balance')
+        # Get the subcategory 'initial balance'
+        set_balance_subcategory = SubCategory.objects.get(name='initial balance')
         # Create a new transaction to set the initial balance of the account
         Transaction.objects.create(
             user=instance.user,
             account=instance,
             category=set_balance_category,
+            sub_category=set_balance_subcategory,
             transaction_type=set_balance_type,
             amount=instance.balance
         )

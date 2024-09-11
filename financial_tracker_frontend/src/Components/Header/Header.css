@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    background-color: #333;
+    background-color: hsl(0, 0%, 20%);
     color: white;
   }
   
@@ -30,11 +30,11 @@
   }
   
   nav ul li a:hover {
-    background-color: #555;
+    background-color: hsl(0, 0%, 35%);
   }
   
   .logout-button, .login-button {
-    background-color: #444;
+    background-color: hsl(0, 0%, 30%);
     color: white;
     border: none;
     padding: 5px 10px;

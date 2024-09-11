@@ -1,0 +1,30 @@
+.dashboard-content {
+    background-color: #f0f0f0; /* Light gray background */
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.dashboard-section {
+    background-color: #d3d3d3; /* Medium gray background */
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.dashboard-section h2 {
+    color: #333; /* Dark gray text */
+    margin-bottom: 10px;
+}
+
+.dashboard-section ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.dashboard-section li {
+    background-color: #e0e0e0; /* Light gray background for list items */
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    color: #555; /* Medium gray text */
+}

@@ -41,12 +41,17 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ['email', 'first_name', 'last_name', 'date_of_birth', 'phone_number', 'address']
 
 class AccountSerializer(serializers.ModelSerializer):
+    currency_symbol = serializers.SerializerMethodField()
     # Meta class to specify the model and fields to be serialized
     class Meta:
         # Specify the model to be serialized
         model = Account
         # Define the fields to include in the serialized output
-        fields = ['id', 'name', 'balance']
+        fields = ['id', 'name', 'balance', 'currency_symbol']
+        
+    def get_currency_symbol(self, obj):
+        # Assuming `obj.currency` holds the currency code like 'USD', 'EUR', etc.
+        return obj.currency.symbol
 
 class TransactionSerializer(serializers.ModelSerializer):
     # Define custom fields to include the names of the related category and transaction type
@@ -70,7 +75,9 @@ class TransactionDateFilterSerializer(serializers.Serializer):
     # Method to get the name of the related category
     start_date = serializers.DateField(required=True)
     end_date = serializers.DateField(required=True)
-    account = serializers.CharField(required=True)
+    accounts = serializers.ListField(
+        child=serializers.CharField(required=True)
+    )
     
     def validate(self, data):
         # Extract start_date and end_date from the validated data

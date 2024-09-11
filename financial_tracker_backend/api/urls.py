@@ -1,7 +1,7 @@
 from django.urls import path
 from api.views.auth_views import CustomTokenObtainPairView, CustomTokenRefreshView, UserStatusView, LogoutView
 from api.views.users_views import UsersList, UserCreateView, UserProfileView
-from api.views.account_views import AccountView
+from api.views.account_views import AccountView, GetAllAccountForUser
 from api.views.transaction_views import FilteredTransactionView
 
 urlpatterns = [
@@ -16,5 +16,7 @@ urlpatterns = [
     path('profile/', UserProfileView.as_view(), name='user-profile'),
     path('accounts/', AccountView.as_view(), name='account-list'),
     path('filtered-transactions/', FilteredTransactionView.as_view(), name='filtered-transaction-list'),
+    
+    path('account/get-all-accounts', GetAllAccountForUser.as_view(), name='get-all-accounts'),
 
 ]

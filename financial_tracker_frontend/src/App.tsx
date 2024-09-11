@@ -8,6 +8,7 @@ import Header from "./Components/Header/Header";
 import Footer from "./Components/Footer/Footer";
 import HomePage from "./Components/HomePage/HomePage";
 import Dashboard from "./Components/DashBoard/DashBoard";
+import './App.css';
 
 const App: React.FC = () => {
   const [isSidebarVisible, setIsSidebarVisible] = useState<boolean>(false);

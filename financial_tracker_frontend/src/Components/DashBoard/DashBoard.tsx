@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../../services/api';
-import ScrollableBox from './ScrollableBox';
 import SideBar from '../SideBar/SideBar';
-import DateModal from './DateModal';
-import PieChartExpenses from './PieChartExpenses';
+import DashboardContentMain from './DashboardContentMain/DashboardContentMain';
 import './DashBoard.css';
+
+interface Account {
+  id: number;
+  name: string;
+  balance: number;
+  currency_symbol: string;
+}
 
 interface DashBoardProps {
     isSidebarVisible: boolean;
@@ -20,26 +25,76 @@ interface RecordsOverviewProps {
   transaction_type_name: string;
 }
 
-const Dashboard: React.FC<DashBoardProps> = ({isSidebarVisible}) => {
+interface User {
+  email: string;
+  first_name: string;
+  last_name: string;
+  date_of_birth: string | null;
+  phone_number: string | null;
+  address: string;
+}
 
+const Dashboard: React.FC<DashBoardProps> = ({isSidebarVisible}) => {
+  const [user, setUser] = useState<User | null>(null);
   const [transactions, setTransactions] = useState<RecordsOverviewProps[]>([]);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-  const [account, setAccount] = useState('acc1');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [selectedAccounts, setSelectedAccounts] = useState<Set<string>>(new Set());
   const [datesSet, setDatesSet] = useState<boolean>(false);
+  const [currency, setCurrency] = useState('USD');
 
   useEffect(() => {
-    const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    const formattedStartOfMonth = startOfMonth.toISOString().split('T')[0];
-    const formattedEndOfMonth = endOfMonth.toISOString().split('T')[0];
+    const fetchUserProfile = async (): Promise<User> => {
+      try {
+        const response = await api.get('/profile/');
+        setUser(response.data);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        // Return a default user object or handle the error appropriately
+        return {
+          email: "",
+          first_name: "",
+          last_name: "",
+          date_of_birth: null,
+          phone_number: null,
+          address: ""
+        };
+      }
+    };
+    
+    const fetchAccounts = async () => {
+      try {
+        const response = await api.get('/accounts/');
+        console.log(response.data);
+        setAccounts(response.data);
+      } catch (error) {
+        console.error('Error fetching accounts:', error);
+      }
+    };
 
-    setStartDate(formattedStartOfMonth);
-    setEndDate(formattedEndOfMonth);
-    setDatesSet(true); // Indicate that the dates have been set
+    const setInitialDates = () => {
+      const now = new Date();
+      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  
+      const formattedStartOfMonth = startOfMonth.toISOString().split('T')[0];
+      const formattedEndOfMonth = endOfMonth.toISOString().split('T')[0];
+  
+      setStartDate(formattedStartOfMonth);
+      setEndDate(formattedEndOfMonth);
+      setDatesSet(true); // Indicate that the dates have been set
+    }
+
+    const fetchDataSequentially = async () => {
+      await fetchUserProfile();
+      await fetchAccounts();
+      setInitialDates();
+    };
+  
+    fetchDataSequentially();
+  
   }, []);
 
   useEffect(() => {
@@ -49,15 +104,22 @@ const Dashboard: React.FC<DashBoardProps> = ({isSidebarVisible}) => {
     }
   }, [datesSet]);
 
+  useEffect(() => {
+    if (accounts.length > 0) {
+      setSelectedAccounts(new Set([accounts[0].name]));
+    }
+  }, [accounts]);
+
   const fetchData = () => {
     // Fetch transactions from API with parameters
-    const params = {
-      account: account,
-      start_date: startDate,
-      end_date: endDate,
-    };
+    const accountNames = accounts.map(account => account.name);
+    const queryParams = new URLSearchParams();
 
-    api.get('/filtered-transactions/', { params })
+    accountNames.forEach(name => queryParams.append('accounts', name));
+    queryParams.append('start_date', startDate);
+    queryParams.append('end_date', endDate);
+
+    api.get(`/filtered-transactions/?${queryParams.toString()}`)
       .then(response => {
         setTransactions(response.data);
       })
@@ -66,15 +128,16 @@ const Dashboard: React.FC<DashBoardProps> = ({isSidebarVisible}) => {
       });
   };
 
-  // Example user data
-  const user = {
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    recentActivities: [
-      'Logged in from a new device',
-      'Updated profile information',
-      'Added a new expense',
-    ],
+  const handleAccountClick = (accountId: string) => {
+    setSelectedAccounts(prevSelected => {
+      const newSelected = new Set(prevSelected);
+      if (newSelected.has(accountId)) {
+        newSelected.delete(accountId);
+      } else {
+        newSelected.add(accountId);
+      }
+      return newSelected;
+    });
   };
 
   return (
@@ -82,51 +145,29 @@ const Dashboard: React.FC<DashBoardProps> = ({isSidebarVisible}) => {
     {<SideBar isSidebarVisible={isSidebarVisible} />}
     <div className="dashboard-main">
       <header className="dashboard-header">
-        <h1>Welcome, {user.name}</h1>
-        <p>{user.email}</p>
+        <h1>Welcome, {user ? user.email : ""}</h1>
       </header>
-      <section className="dashboard-content">
-        <div className="dashboard-section">
-          <h2>Recent Activities</h2>
-          <ul>
-            {user.recentActivities.map((activity, index) => (
-              <li key={index}>{activity}</li>
-            ))}
-          </ul>
-        </div>
-        <div className="dashboard-section">
-          <h2>Quick Actions</h2>
-          <PieChartExpenses transactions={transactions}/>
-        </div>
-        <div className="dashboard-section">
-          <div className='records-overview-title-container'>
-          <h2>Records Overview</h2>
-          <button className="vertical-dots-button" onClick={() => setIsModalOpen(true)}>&#8942;</button>
-          </div>
-          <DateModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <div className="date-filter">
-              <label>
-                Start Date:
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                />
-              </label>
-              <label>
-                End Date:
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                />
-              </label>
-              <button className="dashboard-button" onClick={() => { fetchData(); setIsModalOpen(false); }}>Fetch Data</button>
+      <div className="accounts-container">
+          {accounts.map(account => (
+            <div
+              key={account.id}
+              className={`account-box ${selectedAccounts.has(account.name) ? 'selected' : ''}`}
+              onClick={() => handleAccountClick(account.name)}
+            >
+              <p>{account.name}</p>
+              <p>Balance: {account.balance}</p>
             </div>
-          </DateModal>
-          <ScrollableBox transactions={transactions} />
+          ))}
         </div>
-      </section>
+      <DashboardContentMain
+          transactions={transactions}
+          startDate={startDate}
+          endDate={endDate}
+          currency={currency}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          fetchData={fetchData}
+          setCurrency={setCurrency} />
     </div>
   </div>
   );

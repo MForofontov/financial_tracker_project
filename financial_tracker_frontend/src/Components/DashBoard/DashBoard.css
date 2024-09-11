@@ -1,70 +1,139 @@
-/* Container for the entire dashboard */
 .dashboard-container {
-    position: relative; /* Ensure the parent div is positioned relative */
-    height: 100vh; /* Ensure the parent div takes up the full viewport height */
-    overflow: hidden; /* Prevent the sidebar from overflowing */
-    margin-bottom: 10px;
-  }
+  position: relative;
+  display: flex;
+  overflow: hidden;
+}
 
-  .dashboard-container.sidebar-visible .dashboard-main{
-    margin-left: 250px; /* Adjust this value to match the sidebar width */
-    transition: margin-left 0.3s ease;
-  }
+.sidebar-visible .dashboard-main {
+  margin-left: 250px; /* Adjust based on sidebar width */
+  width: calc(100% - 290px); /* Adjust width to prevent overflow (250px + all subdivisions) */
+}
 
-  /* Main content area */
-  .dashboard-main {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
-  
-  .dashboard-header {
-    margin-bottom: 20px;
-  }
-  
-  .dashboard-content {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .dashboard-section {
-    margin-bottom: 20px;
-    background-color: gray;
-    padding: 10px;
-  }
+.dashboard-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
 
-  .records-overview-title-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* Adjust as needed */
-  }
-  
-  .dashboard-button {
-    margin-right: 10px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .dashboard-button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Transaction slider styles */
-  .transaction-slide {
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 10px;
-  }
+.dashboard-header {
+  background-color: hsl(0, 0%, 30%);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: hsl(0, 0%, 100%);
+}
+
+.dashboard-header p {
+  margin: 5px 0 0;
+  color: #666;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.dashboard-section {
+  background-color: hsl(0, 0%, 30%);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.records-overview-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
 .vertical-dots-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-  }
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.date-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.date-filter label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+}
+
+.date-filter input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.dashboard-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.dashboard-button:hover {
+  background-color: #0056b3;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+}
+
+#chart-tooltip {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px;
+  border-radius: 3px;
+  pointer-events: none;
+  display: none;
+}
+
+/* Account Boxes */
+
+.account-box {
+  border: 1px solid black;
+  background-color: #444;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  text-align: center; /* Center the text */
+}
+
+.account-box:hover {
+  background-color: #f0f0f0;
+}
+
+.account-box.selected {
+  background-color: #d0eaff;
+  border-color: #007bff;
+}
+
+.account-box p {
+  margin: 10px 0;
+  font-size: 18px; /* Increase the font size */
+}

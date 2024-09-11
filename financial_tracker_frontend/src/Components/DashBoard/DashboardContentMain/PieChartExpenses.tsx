@@ -45,6 +45,11 @@ const PieChartExpenses: React.FC<PieChartExpensesProps> = ({ transactions }) => 
                 external: function (context) {
                     // Tooltip Element
                     const tooltipEl = document.getElementById('chart-tooltip');
+                    
+                    // Check if tooltipEl is null
+                    if (!tooltipEl) {
+                        return;
+                    }
 
                     // Hide if no tooltip
                     if (context.tooltip.opacity === 0) {

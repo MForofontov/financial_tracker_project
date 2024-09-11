@@ -19,11 +19,11 @@ class FilteredTransactionView(APIView):
             # Extract validated data from the serializer
             start_date = serializer.validated_data.get('start_date')
             end_date = serializer.validated_data.get('end_date')
-            account = serializer.validated_data.get('account')
+            accounts = serializer.validated_data.get('accounts')
 
             # Filter transactions based on the validated data
             transactions = Transaction.objects.filter(
-                date__gte=start_date, date__lte=end_date, user=request.user, account__name=account
+                date__gte=start_date, date__lte=end_date, user=request.user, account__name__in=accounts
             )
             # Optimize query by selecting related fields
             transactions = transactions.select_related('category', 'transaction_type').all()
