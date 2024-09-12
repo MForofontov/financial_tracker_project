@@ -9,6 +9,7 @@ User = get_user_model()
 
 # View to create a new user
 class UserCreateView(generics.CreateAPIView):
+    permission_classes = [permissions.AllowAny]
     # Allow only POST requests
     http_method_names = ['post']
     # Specify the serializer class to use
@@ -25,17 +26,6 @@ class UserCreateView(generics.CreateAPIView):
         headers = self.get_success_headers(serializer.data)
         # Return the serialized data with a 201 Created status
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-# View to list all users
-class UsersList(generics.ListAPIView):
-    # Require the user to be authenticated to access this view
-    permission_classes = [permissions.IsAuthenticated]
-    # Allow only GET requests
-    http_method_names = ['get']
-    # Specify the queryset to retrieve all users
-    queryset = User.objects.all()
-    # Specify the serializer class to use
-    serializer_class = UserSerializer
 
 # View to retrieve and update the profile of the authenticated user
 class UserProfileView(APIView):
@@ -63,3 +53,15 @@ class UserProfileView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         # Return validation errors with a 400 Bad Request status
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+# View to list all users
+class UsersList(generics.ListAPIView):
+    # Require the user to be authenticated to access this view
+    permission_classes = [permissions.IsAuthenticated]
+    # Allow only GET requests
+    http_method_names = ['get']
+    # Specify the queryset to retrieve all users
+    queryset = User.objects.all()
+    # Specify the serializer class to use
+    serializer_class = UserSerializer
+

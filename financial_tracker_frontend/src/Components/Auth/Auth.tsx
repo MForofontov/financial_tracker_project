@@ -78,18 +78,32 @@ const Auth: React.FC = () => {
                     </p>
                 </div>
             ) : (
-                <div className="register-form">
+		<div className="register-form">
                     <h2>Register</h2>
-                    <form>
+                    <form onSubmit={handleRegisterUser}>
                         <div className="form-group">
                             <label htmlFor="email">Email:</label>
-                            <input type="email" id="email" name="email" required />
+                            <input
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                type="email"
+                                id="email"
+                                name="email"
+                                required
+                            />
                         </div>
                         <div className="form-group">
                             <label htmlFor="password">Password:</label>
-                            <input type="password" id="password" name="password" required />
+                            <input
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                type="password"
+                                id="password"
+                                name="password"
+                                required
+                            />
                         </div>
-                        <button onClick={handleRegisterUser} type="submit" className="auth-button">Register</button>
+                        <button type="submit" className="auth-button">Register</button>
                     </form>
                     <p className="toggle-text">
                         Already have an account? <span onClick={toggleForm}>Login</span>

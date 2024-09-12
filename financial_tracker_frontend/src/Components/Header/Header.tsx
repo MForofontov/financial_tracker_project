@@ -11,10 +11,10 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     const navigate = useNavigate();
-    const isAuthenticated = useAuth();
+    const { isAuthenticated, logout } = useAuth();
 
 
-    const logout = async () => {
+    const handlelogout = async () => {
         // Add your logout logic here
         await logout();
         navigate('/login/');
@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                     <li><a href="/services">Services</a></li>
                     <li><a href="/contact">Contact</a></li>
                     {isAuthenticated ? (
-                        <li><button onClick={logout}>Logout</button></li>
+                        <li><button onClick={handlelogout}>Logout</button></li>
                     ) : (
                         <li><a href="/login">Login</a></li>
                     )}

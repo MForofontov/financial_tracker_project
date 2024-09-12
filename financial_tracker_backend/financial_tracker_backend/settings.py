@@ -151,7 +151,9 @@ CSRF_TRUSTED_ORIGINS = [
     # Add other trusted origins here
 ]
 
-CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_HTTPONLY = True # Enable this for better security in production
+
+CORS_ALLOW_CREDENTIALS = True # Enable this for better security in production
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
@@ -161,7 +163,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated', # Default is only authenticated users can access the API
     ),
 }
 
