@@ -1,46 +1,37 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+// src/components/Header/Header.tsx
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../utils/AuthContext';
-import SideBar from '../SideBar/SideBar';
-import './Header.css'; // Import the CSS file
-
+import SidebarToggleButton from './SideBarToggleButton/SideBarToggleButton';
+import Logo from './Logo/Logo';
+import Nav from './Nav/Nav';
+import './Header.css';
 
 interface HeaderProps {
-    toggleSidebar: () => void;
+  toggleSidebar: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
     const navigate = useNavigate();
     const { isAuthenticated, logout } = useAuth();
-
-
-    const handlelogout = async () => {
-        // Add your logout logic here
-        await logout();
-        navigate('/login/');
+  
+    const handleLogout = async () => {
+      // Add your logout logic here
+      await logout();
+      navigate('/login/');
     };
-
+  
+    const handleNavigation = (path: string) => {
+      navigate(path);
+    };
+  
     return (
-        <header className="header">
-            {isAuthenticated ? (<button onClick={toggleSidebar} className="sidebar-toggle-button">☰</button>
-            ) : null}
-
-            <div className="logo">My Website</div>
-            <nav>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/services">Services</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                    {isAuthenticated ? (
-                        <li><button onClick={handlelogout}>Logout</button></li>
-                    ) : (
-                        <li><a href="/login">Login</a></li>
-                    )}
-                </ul>
-            </nav>
-        </header>
+      <header className="header">
+        {isAuthenticated && <SidebarToggleButton toggleSidebar={toggleSidebar} />}
+        <Logo />
+        <Nav isAuthenticated={isAuthenticated} handleNavigation={handleNavigation} handleLogout={handleLogout} />
+      </header>
     );
-};
-
-export default Header;
+  };
+  
+  export default Header;
